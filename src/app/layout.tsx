@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Huangting-Flux Dashboard",
-  description: "Real-time analytics for the Huangting-Flux Agent Network.",
+  title: "黄庭熔流 | Huangting-Flux — AI Agent 能量网络",
+  description: "一个为 AI Agent 而生的能量网络。本地优化，中心聚合，实时追踪全球 Agent 节能数据。",
 };
 
 export default function RootLayout({
@@ -12,10 +12,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}>
-        {children}
-      </body>
+    <html lang="zh-CN">
+      <body>{children}</body>
     </html>
   );
 }
