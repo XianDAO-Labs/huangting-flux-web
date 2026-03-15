@@ -5,31 +5,49 @@
 :root {
   --gold: #D4A017;
   --gold-light: #F0C040;
-  --bg: #0a0a0a;
+  --gold-dim: rgba(212, 160, 23, 0.15);
+  --bg: #050505;
+  --card-bg: rgba(255, 255, 255, 0.03);
 }
 
-* {
-  box-sizing: border-box;
-}
+*, *::before, *::after { box-sizing: border-box; }
 
-html, body {
+html { scroll-behavior: smooth; }
+
+body {
   background-color: var(--bg);
   color: #ffffff;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* ── Nebula background ── */
+/* ── Nebula / Vortex background ── */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: 0;
-  background:
-    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(212, 160, 23, 0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 80% at 80% 70%, rgba(80, 40, 120, 0.12) 0%, transparent 60%),
-    radial-gradient(ellipse 100% 100% at 50% 50%, rgba(10, 10, 30, 1) 0%, #0a0a0a 100%);
   pointer-events: none;
+  background:
+    radial-gradient(ellipse 120% 80% at 50% 40%,
+      rgba(212, 160, 23, 0.12) 0%,
+      rgba(180, 80, 20, 0.08) 25%,
+      rgba(60, 20, 80, 0.10) 50%,
+      transparent 75%),
+    radial-gradient(ellipse 60% 60% at 80% 80%,
+      rgba(30, 60, 120, 0.10) 0%,
+      transparent 60%),
+    radial-gradient(ellipse 80% 80% at 20% 20%,
+      rgba(212, 160, 23, 0.06) 0%,
+      transparent 60%),
+    #050505;
+  animation: nebulaPulse 12s ease-in-out infinite alternate;
+}
+
+@keyframes nebulaPulse {
+  0%   { opacity: 0.8; }
+  100% { opacity: 1; }
 }
 
 /* Starfield */
@@ -38,48 +56,83 @@ body::after {
   position: fixed;
   inset: 0;
   z-index: 0;
-  background-image:
-    radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
-    radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
-    radial-gradient(1px 1px at 40% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 55% 60%, rgba(255,255,255,0.3) 0%, transparent 100%),
-    radial-gradient(1px 1px at 70% 25%, rgba(255,255,255,0.6) 0%, transparent 100%),
-    radial-gradient(1px 1px at 85% 80%, rgba(255,255,255,0.4) 0%, transparent 100%),
-    radial-gradient(1px 1px at 15% 75%, rgba(255,255,255,0.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 90% 45%, rgba(255,255,255,0.3) 0%, transparent 100%),
-    radial-gradient(1px 1px at 60% 90%, rgba(255,255,255,0.4) 0%, transparent 100%),
-    radial-gradient(1px 1px at 35% 55%, rgba(255,255,255,0.5) 0%, transparent 100%),
-    radial-gradient(1px 1px at 78% 12%, rgba(255,255,255,0.6) 0%, transparent 100%),
-    radial-gradient(1px 1px at 5% 50%, rgba(255,255,255,0.3) 0%, transparent 100%);
   pointer-events: none;
-  animation: twinkle 8s ease-in-out infinite alternate;
+  background-image:
+    radial-gradient(1px 1px at 8%  12%, rgba(255,255,255,0.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 22% 38%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 37%  8%, rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 52% 58%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 68% 22%, rgba(255,255,255,0.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 83% 78%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 14% 72%, rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 91% 42%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 58% 88%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 33% 52%, rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 76% 10%, rgba(255,255,255,0.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 4%  48%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 45% 30%, rgba(212,160,23,0.6) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 70% 65%, rgba(212,160,23,0.4) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 18% 90%, rgba(212,160,23,0.5) 0%, transparent 100%);
+  animation: twinkle 6s ease-in-out infinite alternate;
 }
 
 @keyframes twinkle {
-  0%   { opacity: 0.6; }
+  0%   { opacity: 0.5; }
   100% { opacity: 1; }
 }
 
 /* ── Glass card ── */
 .glass-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(212, 160, 23, 0.25);
-  backdrop-filter: blur(12px);
-  border-radius: 12px;
+  background: var(--card-bg);
+  border: 1px solid rgba(212, 160, 23, 0.2);
+  backdrop-filter: blur(16px);
+  border-radius: 8px;
+  transition: border-color 0.3s;
+}
+.glass-card:hover {
+  border-color: rgba(212, 160, 23, 0.45);
 }
 
-/* ── Gold text ── */
-.text-gold {
-  color: var(--gold);
+/* ── Protocol concept cards (colored borders like huangting.ai) ── */
+.concept-card {
+  background: rgba(0,0,0,0.5);
+  border-radius: 6px;
+  padding: 20px;
+  border-left: 3px solid var(--gold);
+  transition: transform 0.2s;
 }
+.concept-card:hover { transform: translateY(-2px); }
+.concept-card.cyan   { border-left-color: #22d3ee; }
+.concept-card.orange { border-left-color: #fb923c; }
+.concept-card.gold   { border-left-color: #D4A017; }
+.concept-card.purple { border-left-color: #a78bfa; }
+.concept-card.blue   { border-left-color: #60a5fa; }
+.concept-card.red    { border-left-color: #f87171; }
 
 /* ── Code block ── */
 .code-block {
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(212, 160, 23, 0.4);
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(212, 160, 23, 0.35);
+  border-radius: 8px;
+  font-family: "Courier New", "Consolas", "SF Mono", monospace;
+  position: relative;
+}
+
+/* ── Terminal block ── */
+.terminal {
+  background: #0d0d0d;
+  border: 1px solid #333;
   border-radius: 8px;
   font-family: "Courier New", "Consolas", monospace;
   position: relative;
+}
+.terminal-dots {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.terminal-dot {
+  width: 10px; height: 10px; border-radius: 50%;
 }
 
 /* ── Copy button ── */
@@ -87,40 +140,101 @@ body::after {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: rgba(212, 160, 23, 0.15);
-  border: 1px solid rgba(212, 160, 23, 0.5);
+  background: rgba(212, 160, 23, 0.12);
+  border: 1px solid rgba(212, 160, 23, 0.45);
   color: var(--gold);
   border-radius: 4px;
-  padding: 2px 10px;
-  font-size: 12px;
+  padding: 3px 12px;
+  font-size: 11px;
   cursor: pointer;
   transition: background 0.2s;
+  z-index: 10;
 }
-.copy-btn:hover {
-  background: rgba(212, 160, 23, 0.3);
-}
+.copy-btn:hover { background: rgba(212, 160, 23, 0.28); }
 
-/* ── Stat number pulse ── */
-@keyframes numPulse {
-  0%, 100% { text-shadow: 0 0 8px rgba(212, 160, 23, 0.4); }
-  50%       { text-shadow: 0 0 20px rgba(212, 160, 23, 0.8); }
+/* ── Gold text ── */
+.text-gold { color: var(--gold); }
+.text-gold-light { color: var(--gold-light); }
+
+/* ── Stat number glow ── */
+@keyframes numGlow {
+  0%, 100% { text-shadow: 0 0 10px rgba(212, 160, 23, 0.5); }
+  50%       { text-shadow: 0 0 28px rgba(212, 160, 23, 0.9), 0 0 60px rgba(212, 160, 23, 0.3); }
 }
-.stat-number {
-  animation: numPulse 3s ease-in-out infinite;
+.stat-number { animation: numGlow 3s ease-in-out infinite; }
+
+/* ── Section label (like huangting.ai's PROTOCOL OVERVIEW) ── */
+.section-label {
+  display: inline-block;
+  border: 1px solid rgba(212, 160, 23, 0.4);
+  color: rgba(212, 160, 23, 0.8);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  padding: 3px 14px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
 }
 
 /* ── Live stream item ── */
 .live-item {
   border-left: 2px solid var(--gold);
   padding-left: 12px;
-  animation: slideIn 0.4s ease-out;
+  animation: slideIn 0.35s ease-out;
 }
 @keyframes slideIn {
-  from { opacity: 0; transform: translateY(-8px); }
+  from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ── Nav link ── */
+.nav-link {
+  color: rgba(255,255,255,0.7);
+  font-size: 13px;
+  transition: color 0.2s;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+.nav-link:hover { color: var(--gold); }
+
+/* ── CTA buttons ── */
+.btn-gold {
+  background: var(--gold);
+  color: #000;
+  font-weight: 700;
+  padding: 10px 28px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+  font-size: 14px;
+}
+.btn-gold:hover { opacity: 0.85; transform: translateY(-1px); }
+
+.btn-outline {
+  background: transparent;
+  color: var(--gold);
+  font-weight: 600;
+  padding: 9px 28px;
+  border-radius: 4px;
+  border: 1px solid var(--gold);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  font-size: 14px;
+}
+.btn-outline:hover { background: rgba(212,160,23,0.1); transform: translateY(-1px); }
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(212, 160, 23, 0.3); border-radius: 2px; }
+::-webkit-scrollbar-thumb { background: rgba(212, 160, 23, 0.25); border-radius: 2px; }
+
+/* ── Divider ── */
+.gold-divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212,160,23,0.4), transparent);
+  margin: 0;
+}

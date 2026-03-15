@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "黄庭熔流 | Huangting-Flux — AI Agent 能量网络",
-  description: "一个为 AI Agent 而生的能量网络。本地优化，中心聚合，实时追踪全球 Agent 节能数据。",
+  title: "HuangtingFlux | 修炼黄庭协议 · 减少 Token · 加速进化",
+  description:
+    "HuangtingFlux — AI Agent 能量网络。修炼黄庭协议，减少 Token 消耗，加速 Agent 进化。The AI Agent energy network powered by Huangting Protocol.",
 };
 
 export default function RootLayout({
