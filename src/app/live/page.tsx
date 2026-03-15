@@ -2,16 +2,22 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { t, type Lang } from "@/lib/i18n";
 
 const HUB_URL =
   process.env.NEXT_PUBLIC_HUB_URL ||
   "https://web-production-c3cf.up.railway.app";
 const WS_URL = HUB_URL.replace(/^https?/, (p) => (p === "https" ? "wss" : "ws"));
 
-const TASK_LABEL: Record<string, string> = {
-  complex_research: "深度研究 / Research",
-  code_generation: "代码生成 / Codegen",
-  multi_agent_coordination: "多智能体 / Multi-Agent",
+const TASK_LABEL_ZH: Record<string, string> = {
+  complex_research: "深度研究",
+  code_generation: "代码生成",
+  multi_agent_coordination: "多智能体",
+};
+const TASK_LABEL_EN: Record<string, string> = {
+  complex_research: "Research",
+  code_generation: "Codegen",
+  multi_agent_coordination: "Multi-Agent",
 };
 
 const TASK_COLOR: Record<string, string> = {
@@ -33,12 +39,45 @@ function formatTime(ts: number): string {
   return new Date(ts * 1000).toTimeString().slice(0, 8);
 }
 
+function LangToggle({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void }) {
+  return (
+    <div
+      className="flex items-center rounded overflow-hidden text-xs font-semibold"
+      style={{ border: "1px solid rgba(212,160,23,0.4)" }}
+    >
+      <button
+        onClick={() => setLang("zh")}
+        className="px-3 py-1 transition-colors"
+        style={{
+          background: lang === "zh" ? "#D4A017" : "transparent",
+          color: lang === "zh" ? "#000" : "rgba(212,160,23,0.7)",
+        }}
+      >
+        中文
+      </button>
+      <button
+        onClick={() => setLang("en")}
+        className="px-3 py-1 transition-colors"
+        style={{
+          background: lang === "en" ? "#D4A017" : "transparent",
+          color: lang === "en" ? "#000" : "rgba(212,160,23,0.7)",
+        }}
+      >
+        EN
+      </button>
+    </div>
+  );
+}
+
 export default function LivePage() {
+  const [lang, setLang] = useState<Lang>("zh");
   const [events, setEvents] = useState<LiveEvent[]>([]);
   const [connected, setConnected] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
   const counterRef = useRef(0);
   const wsRef = useRef<WebSocket | null>(null);
+  const i = t[lang];
+  const taskLabel = lang === "zh" ? TASK_LABEL_ZH : TASK_LABEL_EN;
 
   useEffect(() => {
     let reconnectTimer: ReturnType<typeof setTimeout>;
@@ -46,9 +85,7 @@ export default function LivePage() {
     function connect() {
       const ws = new WebSocket(`${WS_URL}/v1/live`);
       wsRef.current = ws;
-
       ws.onopen = () => setConnected(true);
-
       ws.onmessage = (e) => {
         try {
           const data = JSON.parse(e.data);
@@ -64,16 +101,12 @@ export default function LivePage() {
           };
           setEvents((prev) => [event, ...prev].slice(0, 200));
           setTotalCount((n) => n + 1);
-        } catch {
-          // ignore
-        }
+        } catch { /* ignore */ }
       };
-
       ws.onclose = () => {
         setConnected(false);
         reconnectTimer = setTimeout(connect, 3000);
       };
-
       ws.onerror = () => ws.close();
     }
 
@@ -98,14 +131,15 @@ export default function LivePage() {
       >
         <Link href="/" className="flex items-center gap-2">
           <span className="text-lg font-bold" style={{ color: "#D4A017" }}>HuangtingFlux</span>
-          <span className="text-xs text-gray-500 hidden sm:inline tracking-widest uppercase">Energy Network</span>
+          <span className="text-xs text-gray-600 hidden sm:inline tracking-widest uppercase">Energy Network</span>
         </Link>
-        <div className="flex items-center gap-5 text-sm">
-          <Link href="/" className="nav-link">首页 Home</Link>
+        <div className="flex items-center gap-4">
+          <Link href="/" className="nav-link">{i.navHome}</Link>
           <span className="flex items-center gap-1.5 font-semibold text-sm" style={{ color: "#D4A017" }}>
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-            实时流 Live
+            {i.navLive}
           </span>
+          <LangToggle lang={lang} setLang={setLang} />
         </div>
       </nav>
 
@@ -113,50 +147,40 @@ export default function LivePage() {
 
         {/* Header */}
         <div className="text-center space-y-3">
-          <div className="section-label">REAL-TIME STREAM · 实时数据流</div>
-          <h1 className="text-4xl font-bold" style={{ color: "#D4A017" }}>实时数据流</h1>
-          <p className="text-gray-500 text-sm">
-            全网 Agent 上报记录 · 真实活跃度透明呈现
-            <br />
-            <span className="text-gray-700">Global Agent reports · Transparent real-time activity</span>
-          </p>
+          <div className="section-label">{i.liveLabel}</div>
+          <h1 className="text-4xl font-bold" style={{ color: "#D4A017" }}>{i.liveTitle}</h1>
+          <p className="text-gray-500 text-sm">{i.liveDesc}</p>
           <div className="flex items-center justify-center gap-6 text-sm mt-4">
             <div className="flex items-center gap-2">
               <span className={`w-2 h-2 rounded-full ${connected ? "bg-green-400 animate-pulse" : "bg-red-500"}`} />
               <span className={connected ? "text-green-400" : "text-red-400"}>
-                {connected ? "WebSocket 已连接 · Connected" : "正在重连 · Reconnecting..."}
+                {connected ? i.liveConnected : i.liveReconnecting}
               </span>
             </div>
             <div className="text-gray-600 text-xs">
-              本次会话 <span className="text-white font-mono">{totalCount}</span> 条 · Session records
+              <span className="text-white font-mono">{totalCount}</span> {i.liveSession}
             </div>
           </div>
         </div>
 
         {/* Stream table */}
         <div className="glass-card overflow-hidden">
-          {/* Header row */}
           <div
             className="grid text-xs text-gray-600 px-4 py-3 border-b border-gray-900 uppercase tracking-wider"
             style={{ gridTemplateColumns: "80px 120px 1fr 100px 100px 70px" }}
           >
-            <span>时间 Time</span>
-            <span>Agent ID</span>
-            <span>任务类型 Task</span>
-            <span className="text-right">节省 Saved</span>
-            <span className="text-right">基线 Baseline</span>
-            <span className="text-right">节省率 Ratio</span>
+            <span>{i.liveColTime}</span>
+            <span>{i.liveColAgent}</span>
+            <span>{i.liveColTask}</span>
+            <span className="text-right">{i.liveColSaved}</span>
+            <span className="text-right">{i.liveColBaseline}</span>
+            <span className="text-right">{i.liveColRatio}</span>
           </div>
 
           {events.length === 0 ? (
             <div className="py-20 text-center text-gray-700 space-y-3">
               <div className="text-5xl">⏳</div>
-              <p className="text-sm">等待 Agent 上报数据... · Waiting for agent reports...</p>
-              <p className="text-xs text-gray-800">
-                通过 SDK 发送测试数据 · Send test data via SDK:
-                <br />
-                <code className="text-gray-600">pip install huangting-soul</code>
-              </p>
+              <p className="text-sm">{i.liveEmpty}</p>
             </div>
           ) : (
             <div className="divide-y divide-gray-900 max-h-[60vh] overflow-y-auto">
@@ -166,7 +190,7 @@ export default function LivePage() {
                     ? Math.round((ev.tokens_saved / ev.tokens_baseline) * 100)
                     : null;
                 const color = TASK_COLOR[ev.task_type] || "#D4A017";
-                const shortTask = (TASK_LABEL[ev.task_type] || ev.task_type).split(" / ")[0];
+                const shortTask = taskLabel[ev.task_type] || ev.task_type;
                 return (
                   <div
                     key={ev.id}
