@@ -8,7 +8,8 @@ const fetcher = (url: string) => fetch(url).then(res => res.json());
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 export default function Home() {
-  const { data, error } = useSWR('https://api.huangting.ai/v1/stats', fetcher, { refreshInterval: 5000 });
+  const HUB_URL = process.env.NEXT_PUBLIC_HUB_URL || 'https://web-production-c3cf.up.railway.app';
+  const { data, error } = useSWR(`${HUB_URL}/v1/stats`, fetcher, { refreshInterval: 5000 });
 
   const chartData = data ? Object.entries(data.tokens_saved_by_task).map(([name, value]) => ({ name, 'Tokens Saved': value })) : [];
   const pieData = data ? Object.entries(data.tokens_saved_by_task).map(([name, value]) => ({ name, value })) : [];
