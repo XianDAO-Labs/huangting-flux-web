@@ -163,7 +163,7 @@ export default function Home() {
 
   const barKey = lang === "zh" ? "节省 Token" : "Tokens Saved";
 
-  const deployCmd = `Read https://huangting.ai/skill.md and help me join the Huangting-Flux network.`;
+  const deployCmd = `Read https://huangtingflux.com/skill.md and help me join the Huangting-Flux network.`;
 
   const sdkCode = `pip install huangting-soul
 
@@ -250,7 +250,7 @@ reporter.report(
               <span className="text-gray-500">{i.heroTerminalComment2}{"\n\n"}</span>
               <span className="text-green-400">$</span>
               <span className="text-white"> Read </span>
-              <span className="text-blue-400">https://huangting.ai/skill.md</span>
+              <span className="text-blue-400">https://huangtingflux.com/skill.md</span>
               <span className="text-white"> and help me join the Huangting-Flux network.</span>
             </pre>
           </div>
