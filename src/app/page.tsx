@@ -12,6 +12,8 @@ const HUB_URL =
   process.env.NEXT_PUBLIC_HUB_URL ||
   "https://web-production-c3cf.up.railway.app";
 
+const MCP_ENDPOINT = `${HUB_URL}/mcp`;
+
 const COLORS = ["#D4A017", "#F0C040", "#B8860B", "#8B6914"];
 
 const TASK_LABEL_ZH: Record<string, string> = {
@@ -68,7 +70,6 @@ function CopyButton({ text, lang }: { text: string; lang: Lang }) {
   );
 }
 
-// Pie label rendered inside slices to avoid overflow
 const RADIAN = Math.PI / 180;
 function CustomPieLabel({ cx, cy, midAngle, innerRadius, outerRadius, percent, name }: {
   cx: number; cy: number; midAngle: number;
@@ -89,7 +90,6 @@ function CustomPieLabel({ cx, cy, midAngle, innerRadius, outerRadius, percent, n
   );
 }
 
-// Language toggle button
 function LangToggle({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void }) {
   return (
     <div
@@ -121,6 +121,12 @@ function LangToggle({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void 
 }
 
 const CONCEPT_COLORS = ["cyan", "orange", "gold", "purple", "blue", "red"];
+const TOOL_BADGE_COLORS: Record<string, string> = {
+  cyan: "#06B6D4",
+  gold: "#D4A017",
+  green: "#48BB78",
+  purple: "#9F7AEA",
+};
 
 export default function Home() {
   const [lang, setLang] = useState<Lang>("zh");
@@ -163,24 +169,33 @@ export default function Home() {
 
   const barKey = lang === "zh" ? "节省 Token" : "Tokens Saved";
 
-  const deployCmd = `Read https://huangtingflux.com/skill.md and help me join the Huangting-Flux network.`;
+  // Code snippets
+  const langchainCode = `pip install langchain-huangting
 
-  const sdkCode = `pip install huangting-soul
+from langchain_huangting import HuangtingTool
 
-from huangting_soul import HuangtingOptimizer, AsyncMetricReporter
+tool = HuangtingTool(agent_id="my-agent", lang="${lang}")
+result = tool.run({"action": "get_strategy", "task_type": "complex_research"})`;
 
-optimizer = HuangtingOptimizer()
-reporter  = AsyncMetricReporter(hub_url="${HUB_URL}")
+  const claudeConfig = JSON.stringify({
+    mcpServers: {
+      huangting: {
+        url: MCP_ENDPOINT,
+      },
+    },
+  }, null, 2);
 
-# ${lang === "zh" ? "本地优化 — 零网络延迟" : "Local optimization — zero latency"}
-result = optimizer.optimize(prompt, task_type="complex_research")
+  const mcpDirectCode = `import requests
 
-# ${lang === "zh" ? "异步上报 — 非阻塞" : "Async report — non-blocking"}
-reporter.report(
-    agent_id="my-agent",
-    task_type="complex_research",
-    tokens_saved=1500,
-)`;
+resp = requests.post("${MCP_ENDPOINT}", json={
+    "jsonrpc": "2.0", "id": 1,
+    "method": "tools/call",
+    "params": {
+        "name": "get_optimization_strategy",
+        "arguments": {"task_type": "complex_research"}
+    }
+})
+print(resp.json())`;
 
   return (
     <div className="relative min-h-screen" style={{ zIndex: 1 }}>
@@ -196,7 +211,7 @@ reporter.report(
       >
         <div className="flex items-center gap-2">
           <span className="text-lg font-bold" style={{ color: "#D4A017" }}>HuangtingFlux</span>
-          <span className="text-xs text-gray-600 hidden sm:inline tracking-widest uppercase">Energy Network</span>
+          <span className="text-xs text-gray-600 hidden sm:inline tracking-widest uppercase">MCP Network</span>
         </div>
         <div className="flex items-center gap-4">
           <Link href="/" className="nav-link">{i.navHome}</Link>
@@ -204,11 +219,12 @@ reporter.report(
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
             {i.navLive}
           </Link>
+          <a href="#developer" className="nav-link hidden md:inline">{i.navDev}</a>
           <a href="https://huangting.ai" target="_blank" rel="noopener noreferrer" className="nav-link hidden md:inline">
             {i.navProtocol}
           </a>
           <a
-            href="https://github.com/XianDAO-Labs/huangting-protocol"
+            href="https://github.com/markmeng0X/langchain-huangting"
             target="_blank" rel="noopener noreferrer"
             className="btn-outline text-xs px-3 py-1.5 hidden sm:inline-block"
           >
@@ -236,22 +252,21 @@ reporter.report(
 
           <p className="text-2xl md:text-3xl font-bold text-white">{i.heroSlogan}</p>
 
-          {/* Terminal */}
+          {/* MCP Endpoint Terminal */}
           <div className="terminal max-w-2xl w-full mx-auto p-5 mt-4 text-left">
-            <CopyButton text={deployCmd} lang={lang} />
+            <CopyButton text={MCP_ENDPOINT} lang={lang} />
             <div className="terminal-dots">
               <span className="terminal-dot" style={{ background: "#ff5f57" }} />
               <span className="terminal-dot" style={{ background: "#febc2e" }} />
               <span className="terminal-dot" style={{ background: "#28c840" }} />
-              <span className="ml-2 text-xs text-gray-500">huangting-flux ~ kernel</span>
+              <span className="ml-2 text-xs text-gray-500">huangting-flux ~ mcp</span>
             </div>
             <pre className="text-sm leading-relaxed overflow-x-auto">
-              <span className="text-gray-500">{i.heroTerminalComment1}{"\n"}</span>
-              <span className="text-gray-500">{i.heroTerminalComment2}{"\n\n"}</span>
-              <span className="text-green-400">$</span>
-              <span className="text-white"> Read </span>
-              <span className="text-blue-400">https://huangtingflux.com/skill.md</span>
-              <span className="text-white"> and help me join the Huangting-Flux network.</span>
+              <span className="text-gray-500">{i.heroMcpComment}{"\n\n"}</span>
+              <span className="text-gray-400">MCP Endpoint:{"\n"}</span>
+              <span className="text-green-400">  {MCP_ENDPOINT}{"\n\n"}</span>
+              <span className="text-gray-400">pip install </span>
+              <span className="text-yellow-300">langchain-huangting</span>
             </pre>
           </div>
 
@@ -284,6 +299,7 @@ reporter.report(
             <a href="https://huangting.ai" target="_blank" rel="noopener noreferrer" className="btn-gold">
               {i.heroExplore}
             </a>
+            <a href="#developer" className="btn-outline">{i.heroDevBtn}</a>
             <Link href="/live" className="btn-outline">{i.heroLiveBtn}</Link>
           </div>
         </section>
@@ -291,7 +307,7 @@ reporter.report(
         <hr className="gold-divider" />
 
         {/* ══════════════════════ PROTOCOL INTRO ══════════════════════ */}
-        <section className="max-w-6xl mx-auto px-6 py-24 space-y-14">
+        <section className="max-w-6xl mx-auto px-6 py-24 space-y-10">
           <div className="text-center space-y-3">
             <div className="section-label">{i.protocolLabel}</div>
             <h2 className="text-4xl font-bold" style={{ color: "#D4A017" }}>{i.protocolTitle}</h2>
@@ -331,6 +347,43 @@ reporter.report(
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        <hr className="gold-divider" />
+
+        {/* ══════════════════════ MCP TOOLS ══════════════════════ */}
+        <section className="max-w-6xl mx-auto px-6 py-24 space-y-10">
+          <div className="text-center space-y-2">
+            <div className="section-label">{i.mcpToolsLabel}</div>
+            <h2 className="text-3xl font-bold" style={{ color: "#D4A017" }}>{i.mcpToolsTitle}</h2>
+            <p className="text-gray-500 text-sm">{i.mcpToolsDesc}</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {i.mcpTools.map((tool) => (
+              <div key={tool.name} className="glass-card p-6 space-y-3">
+                <div className="flex items-center gap-3">
+                  <span
+                    className="text-xs px-2 py-0.5 rounded font-semibold"
+                    style={{
+                      background: `${TOOL_BADGE_COLORS[tool.color] || "#D4A017"}22`,
+                      color: TOOL_BADGE_COLORS[tool.color] || "#D4A017",
+                      border: `1px solid ${TOOL_BADGE_COLORS[tool.color] || "#D4A017"}44`,
+                    }}
+                  >
+                    {tool.badge}
+                  </span>
+                  <code
+                    className="text-sm font-mono font-bold"
+                    style={{ color: TOOL_BADGE_COLORS[tool.color] || "#D4A017" }}
+                  >
+                    {tool.name}
+                  </code>
+                </div>
+                <p className="text-sm text-gray-400 leading-relaxed">{tool.desc}</p>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -474,64 +527,138 @@ reporter.report(
         <hr className="gold-divider" />
 
         {/* ══════════════════════ DEVELOPER INTEGRATION ══════════════════════ */}
-        <section className="max-w-6xl mx-auto px-6 py-24 space-y-10">
+        <section id="developer" className="max-w-6xl mx-auto px-6 py-24 space-y-10">
           <div className="text-center space-y-2">
             <div className="section-label">{i.devLabel}</div>
             <h2 className="text-3xl font-bold" style={{ color: "#D4A017" }}>{i.devTitle}</h2>
             <p className="text-gray-500 text-sm">{i.devSub}</p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-            {/* Code block */}
-            <div className="code-block p-6">
-              <CopyButton text={sdkCode} lang={lang} />
-              <pre className="text-xs leading-relaxed overflow-x-auto" style={{ color: "#e2e8f0" }}>
-                <span className="text-gray-500"># Install{"\n"}</span>
-                <span className="text-green-400">pip install</span>
-                <span className="text-white"> huangting-soul{"\n\n"}</span>
-                <span className="text-blue-400">from</span>
-                <span className="text-white"> huangting_soul </span>
-                <span className="text-blue-400">import</span>
-                <span className="text-white"> HuangtingOptimizer, AsyncMetricReporter{"\n\n"}</span>
-                <span className="text-yellow-300">optimizer</span>
-                <span className="text-white"> = HuangtingOptimizer(){"\n"}</span>
-                <span className="text-yellow-300">reporter</span>
-                <span className="text-white">  = AsyncMetricReporter(hub_url=</span>
-                <span className="text-green-300">&quot;{HUB_URL}&quot;</span>
-                <span className="text-white">){"\n\n"}</span>
-                <span className="text-gray-500"># {lang === "zh" ? "本地优化 — 零网络延迟" : "Local optimization — zero latency"}{"\n"}</span>
-                <span className="text-yellow-300">result</span>
-                <span className="text-white"> = optimizer.optimize(prompt, task_type=</span>
-                <span className="text-green-300">&quot;complex_research&quot;</span>
-                <span className="text-white">){"\n\n"}</span>
-                <span className="text-gray-500"># {lang === "zh" ? "异步上报 — 非阻塞" : "Async report — non-blocking"}{"\n"}</span>
-                <span className="text-yellow-300">reporter</span>
-                <span className="text-white">.report({"\n"}</span>
-                <span className="text-white">    agent_id=</span>
-                <span className="text-green-300">&quot;my-agent&quot;</span>
-                <span className="text-white">,{"\n"}</span>
-                <span className="text-white">    task_type=</span>
-                <span className="text-green-300">&quot;complex_research&quot;</span>
-                <span className="text-white">,{"\n"}</span>
-                <span className="text-white">    tokens_saved=</span>
-                <span className="text-orange-300">1500</span>
-                <span className="text-white">,{"\n"}</span>
-                <span className="text-white">){"\n"}</span>
-              </pre>
+          {/* Three integration methods */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            {/* Method 1: LangChain */}
+            <div className="glass-card p-6 space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">📦</span>
+                <h3 className="font-bold text-white">{i.langchainLabel}</h3>
+              </div>
+              <p className="text-xs text-gray-500">{i.langchainDesc}</p>
+              <div className="code-block p-4 relative">
+                <CopyButton text={langchainCode} lang={lang} />
+                <pre className="text-xs leading-relaxed overflow-x-auto" style={{ color: "#e2e8f0" }}>
+                  <span className="text-green-400">pip install</span>
+                  <span className="text-white"> langchain-huangting{"\n\n"}</span>
+                  <span className="text-blue-400">from</span>
+                  <span className="text-white"> langchain_huangting </span>
+                  <span className="text-blue-400">import</span>
+                  <span className="text-white"> HuangtingTool{"\n\n"}</span>
+                  <span className="text-yellow-300">tool</span>
+                  <span className="text-white"> = HuangtingTool({"\n"}</span>
+                  <span className="text-white">    agent_id=</span>
+                  <span className="text-green-300">&quot;my-agent&quot;</span>
+                  <span className="text-white">,{"\n"}</span>
+                  <span className="text-white">    lang=</span>
+                  <span className="text-green-300">&quot;{lang}&quot;</span>
+                  <span className="text-white">,{"\n"}</span>
+                  <span className="text-white">){"\n"}</span>
+                </pre>
+              </div>
+              <a
+                href="https://pypi.org/project/langchain-huangting/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block text-xs px-3 py-1.5 rounded transition-colors"
+                style={{
+                  background: "rgba(212,160,23,0.1)",
+                  color: "#D4A017",
+                  border: "1px solid rgba(212,160,23,0.3)",
+                }}
+              >
+                PyPI →
+              </a>
             </div>
 
-            {/* Explanation */}
-            <div className="space-y-5">
-              {i.devFeatures.map((item) => (
-                <div key={item.title} className="flex gap-4">
-                  <div className="text-2xl flex-shrink-0 mt-0.5">{item.icon}</div>
-                  <div>
-                    <div className="font-semibold text-white mb-1">{item.title}</div>
-                    <p className="text-sm text-gray-400 leading-relaxed">{item.desc}</p>
-                  </div>
-                </div>
-              ))}
+            {/* Method 2: Claude Desktop */}
+            <div className="glass-card p-6 space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🤖</span>
+                <h3 className="font-bold text-white">{i.claudeLabel}</h3>
+              </div>
+              <p className="text-xs text-gray-500">{i.claudeDesc}</p>
+              <div className="code-block p-4 relative">
+                <CopyButton text={claudeConfig} lang={lang} />
+                <pre className="text-xs leading-relaxed overflow-x-auto" style={{ color: "#e2e8f0" }}>
+                  <span className="text-gray-500">{"{"}{"\n"}</span>
+                  <span className="text-white">  </span>
+                  <span className="text-blue-300">&quot;mcpServers&quot;</span>
+                  <span className="text-white">: {"{"}{"\n"}</span>
+                  <span className="text-white">    </span>
+                  <span className="text-yellow-300">&quot;huangting&quot;</span>
+                  <span className="text-white">: {"{"}{"\n"}</span>
+                  <span className="text-white">      </span>
+                  <span className="text-green-300">&quot;url&quot;</span>
+                  <span className="text-white">: </span>
+                  <span className="text-green-400">&quot;{MCP_ENDPOINT}&quot;</span>
+                  <span className="text-white">{"\n"}</span>
+                  <span className="text-white">    {"}"}{"\n"}</span>
+                  <span className="text-white">  {"}"}{"\n"}</span>
+                  <span className="text-gray-500">{"}"}</span>
+                </pre>
+              </div>
             </div>
+
+            {/* Method 3: Direct MCP */}
+            <div className="glass-card p-6 space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🔌</span>
+                <h3 className="font-bold text-white">{i.mcpEndpointLabel}</h3>
+              </div>
+              <p className="text-xs text-gray-500">{i.mcpEndpointDesc}</p>
+              <div className="code-block p-4 relative">
+                <CopyButton text={mcpDirectCode} lang={lang} />
+                <pre className="text-xs leading-relaxed overflow-x-auto" style={{ color: "#e2e8f0" }}>
+                  <span className="text-blue-400">import</span>
+                  <span className="text-white"> requests{"\n\n"}</span>
+                  <span className="text-yellow-300">resp</span>
+                  <span className="text-white"> = requests.post({"\n"}</span>
+                  <span className="text-green-300">  &quot;{MCP_ENDPOINT}&quot;</span>
+                  <span className="text-white">,{"\n"}</span>
+                  <span className="text-white">  json={"{"}</span>
+                  <span className="text-green-300">&quot;method&quot;</span>
+                  <span className="text-white">: </span>
+                  <span className="text-green-300">&quot;tools/call&quot;</span>
+                  <span className="text-white">, ...{"}"}{"\n"}</span>
+                  <span className="text-white">){"\n"}</span>
+                </pre>
+              </div>
+              <a
+                href="https://huangting.ai/mcp"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block text-xs px-3 py-1.5 rounded transition-colors"
+                style={{
+                  background: "rgba(212,160,23,0.1)",
+                  color: "#D4A017",
+                  border: "1px solid rgba(212,160,23,0.3)",
+                }}
+              >
+                {i.footerMcp} →
+              </a>
+            </div>
+          </div>
+
+          {/* Feature list */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
+            {i.devFeatures.map((item) => (
+              <div key={item.title} className="flex gap-4">
+                <div className="text-2xl flex-shrink-0 mt-0.5">{item.icon}</div>
+                <div>
+                  <div className="font-semibold text-white mb-1">{item.title}</div>
+                  <p className="text-sm text-gray-400 leading-relaxed">{item.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -544,7 +671,11 @@ reporter.report(
           <div className="flex items-center justify-center gap-4 mt-3 text-xs text-gray-700">
             <a href="https://huangting.ai" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400 transition-colors">huangting.ai</a>
             <span>·</span>
-            <a href="https://github.com/XianDAO-Labs/huangting-protocol" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400 transition-colors">GitHub</a>
+            <a href="https://pypi.org/project/langchain-huangting/" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400 transition-colors">{i.footerPypi}</a>
+            <span>·</span>
+            <a href="https://huangting.ai/mcp" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400 transition-colors">{i.footerMcp}</a>
+            <span>·</span>
+            <a href="https://github.com/markmeng0X/langchain-huangting" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400 transition-colors">GitHub</a>
             <span>·</span>
             <Link href="/live" className="hover:text-gray-400 transition-colors">Live</Link>
           </div>

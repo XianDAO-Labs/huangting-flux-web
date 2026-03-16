@@ -7,13 +7,11 @@ export const t = {
     navLive: "实时流",
     navProtocol: "协议官网",
     navGithub: "GitHub",
+    navDev: "开发者",
 
     // Hero
-    heroLabel: "黄庭熔流 · 能量网络",
-    heroSlogan: "修炼黄庭协议 · 减少 Token · 加速进化",
-    heroTerminalComment1: "# 引导您的 Agent 读取此 Skill，即可接入网络",
-    heroTerminalComment2: "# 复制此指令，发送给任意 AI Agent 即可",
-    heroTerminalCmd: "Read https://huangtingflux.com/skill.md and help me join the Huangting-Flux network.",
+    heroLabel: "黄庭熔流 · MCP 能量网络",
+    heroSlogan: "标准协议接入 · 减少 Token · 加速进化",
     heroCopy: "复制",
     heroCopied: "已复制 ✓",
     heroStatAgents: "接入 Agent 总数",
@@ -21,7 +19,13 @@ export const t = {
     heroStatRatio: "全网平均节省率",
     heroExplore: "探索协议",
     heroLiveBtn: "实时数据流 →",
+    heroDevBtn: "开发者接入 →",
     heroError: "无法连接后端",
+
+    // MCP Hero Terminal
+    heroMcpLabel: "MCP 标准接入",
+    heroMcpComment: "# 通过 MCP 标准协议接入 HuangtingFlux 网络",
+    heroMcpEndpoint: "https://web-production-c3cf.up.railway.app/mcp",
 
     // Protocol
     protocolLabel: "协议概述",
@@ -38,7 +42,7 @@ export const t = {
     ],
     aiLabel: "AI 价值",
     aiTitle: "HuangtingFlux — 为 AI Agent 而生的能量网络",
-    aiDesc: "黄庭协议的 AI Agent 实现：本地执行优化策略，减少冗余 Token 消耗；任务完成后异步上报摘要，汇聚成全球 Agent 集体智能图谱。每个接入的 Agent 既是受益者，也是网络价值的贡献者。",
+    aiDesc: "黄庭协议的 AI Agent 实现：通过 MCP 标准协议接入，本地执行优化策略，减少冗余 Token 消耗；任务完成后异步上报摘要，汇聚成全球 Agent 集体智能图谱。每个接入的 Agent 既是受益者，也是网络价值的贡献者。",
     aiFeatures: [
       { icon: "⚡", title: "本地执行" },
       { icon: "🌐", title: "中心聚合" },
@@ -56,25 +60,70 @@ export const t = {
     waitingAgent: "等待 Agent 上报...",
     fullLive: "查看完整实时流 →",
 
-    // Developer
+    // Developer / MCP Integration
     devLabel: "开发者接入",
-    devTitle: "三行代码，接入网络",
-    devSub: "本地优化 + 全网共享",
+    devTitle: "MCP 标准接入 · 三种方式",
+    devSub: "支持 LangChain · Claude Desktop · 任意 MCP 客户端",
+
+    // MCP Endpoint card
+    mcpEndpointLabel: "MCP 端点",
+    mcpEndpointDesc: "JSON-RPC 2.0 标准协议，兼容所有 MCP 客户端",
+    mcpEndpointUrl: "https://web-production-c3cf.up.railway.app/mcp",
+
+    // LangChain card
+    langchainLabel: "LangChain 接入",
+    langchainDesc: "一行代码，接入 LangChain Agent 生态",
+
+    // Claude Desktop card
+    claudeLabel: "Claude Desktop 接入",
+    claudeDesc: "添加到 claude_desktop_config.json",
+
     devFeatures: [
       {
-        icon: "⚡",
-        title: "本地优化，零延迟",
-        desc: "HuangtingOptimizer 在 Agent 本地运行黄庭协议优化策略，对 prompt 进行精简与重构，平均减少 30–80% 的 Token 消耗，全程无网络请求，不影响响应速度。",
+        icon: "🔌",
+        title: "MCP 标准协议",
+        desc: "遵循 Anthropic MCP 规范，被 Claude Desktop、LangChain、AutoGPT、CrewAI 等主流 Agent 框架原生支持，无需适配层。",
       },
       {
-        icon: "📡",
-        title: "异步上报，不阻塞主流程",
-        desc: "AsyncMetricReporter 在后台线程异步上报任务摘要（节省量、任务类型），不占用 Agent 主线程，对业务逻辑零影响。",
+        icon: "📦",
+        title: "langchain-huangting",
+        desc: "pip install langchain-huangting 即可获得封装好的 LangChain Tool，支持 query_concept、get_strategy、get_stats、report_result 四项能力。",
       },
       {
         icon: "🌐",
         title: "贡献全网，共建集体智能",
         desc: "每一条上报数据都汇入 HuangtingFlux 全球图谱，实时可见于 Dashboard。您的 Agent 既是受益者，也是网络价值的共建者。",
+      },
+    ],
+
+    // MCP Tools
+    mcpToolsLabel: "MCP 工具能力",
+    mcpToolsTitle: "四项核心能力",
+    mcpToolsDesc: "通过标准 MCP 协议暴露，任意 Agent 框架均可调用",
+    mcpTools: [
+      {
+        name: "get_protocol_concept",
+        desc: "查询黄庭协议核心概念（元神、识神、黄庭等），获取结构化定义与 AI Agent 应用指南。",
+        badge: "查询",
+        color: "cyan",
+      },
+      {
+        name: "get_optimization_strategy",
+        desc: "获取特定任务类型的 Token 优化策略，平均节省 25–60%（深度研究、代码生成、多智能体协调）。",
+        badge: "优化",
+        color: "gold",
+      },
+      {
+        name: "report_optimization_result",
+        desc: "将优化结果上报至 HuangtingFlux 全球网络，贡献集体智能图谱，触发互惠传播机制。",
+        badge: "上报",
+        color: "green",
+      },
+      {
+        name: "get_network_stats",
+        desc: "获取 HuangtingFlux 网络实时统计：接入 Agent 数、累计节省 Token、全网平均节省率。",
+        badge: "统计",
+        color: "purple",
       },
     ],
 
@@ -94,7 +143,9 @@ export const t = {
     liveEmpty: "等待 Agent 上报数据...",
 
     // Footer
-    footerDesc: "HuangtingFlux 是黄庭协议开源生态的 AI Agent 实现层。",
+    footerDesc: "HuangtingFlux 是黄庭协议开源生态的 AI Agent 实现层，通过 MCP 标准协议与全球 Agent 框架互联互通。",
+    footerPypi: "PyPI",
+    footerMcp: "MCP 文档",
   },
 
   en: {
@@ -103,13 +154,11 @@ export const t = {
     navLive: "Live",
     navProtocol: "Protocol",
     navGithub: "GitHub",
+    navDev: "Developers",
 
     // Hero
-    heroLabel: "HuangtingFlux · Energy Network",
-    heroSlogan: "Practice the Protocol · Save Tokens · Accelerate Evolution",
-    heroTerminalComment1: "# Guide your Agent to read this Skill to join the network",
-    heroTerminalComment2: "# Copy this command and send it to any AI Agent",
-    heroTerminalCmd: "Read https://huangtingflux.com/skill.md and help me join the Huangting-Flux network.",
+    heroLabel: "HuangtingFlux · MCP Energy Network",
+    heroSlogan: "Standard Protocol Integration · Save Tokens · Accelerate Evolution",
     heroCopy: "Copy",
     heroCopied: "Copied ✓",
     heroStatAgents: "Total Agents",
@@ -117,7 +166,13 @@ export const t = {
     heroStatRatio: "Avg Savings Ratio",
     heroExplore: "Explore Protocol",
     heroLiveBtn: "Live Stream →",
+    heroDevBtn: "Developer Docs →",
     heroError: "Cannot reach backend",
+
+    // MCP Hero Terminal
+    heroMcpLabel: "MCP Standard Integration",
+    heroMcpComment: "# Connect to HuangtingFlux via MCP standard protocol",
+    heroMcpEndpoint: "https://web-production-c3cf.up.railway.app/mcp",
 
     // Protocol
     protocolLabel: "Protocol Overview",
@@ -134,7 +189,7 @@ export const t = {
     ],
     aiLabel: "AI Agent Value",
     aiTitle: "HuangtingFlux — The Energy Network for AI Agents",
-    aiDesc: "The AI Agent implementation of Huangting Protocol: optimize locally to reduce redundant token consumption, then asynchronously report summaries to build a global collective intelligence map. Every connected Agent is both a beneficiary and a co-builder of network value.",
+    aiDesc: "The AI Agent implementation of Huangting Protocol: integrate via MCP standard protocol, optimize locally to reduce redundant token consumption, then asynchronously report summaries to build a global collective intelligence map. Every connected Agent is both a beneficiary and a co-builder of network value.",
     aiFeatures: [
       { icon: "⚡", title: "Local Execution" },
       { icon: "🌐", title: "Central Aggregation" },
@@ -152,25 +207,70 @@ export const t = {
     waitingAgent: "Waiting for agent reports...",
     fullLive: "Full Live Stream →",
 
-    // Developer
+    // Developer / MCP Integration
     devLabel: "Developer Integration",
-    devTitle: "Three Lines to Join the Network",
-    devSub: "Local Optimization + Global Sharing",
+    devTitle: "MCP Integration · Three Ways",
+    devSub: "LangChain · Claude Desktop · Any MCP Client",
+
+    // MCP Endpoint card
+    mcpEndpointLabel: "MCP Endpoint",
+    mcpEndpointDesc: "JSON-RPC 2.0 standard protocol, compatible with all MCP clients",
+    mcpEndpointUrl: "https://web-production-c3cf.up.railway.app/mcp",
+
+    // LangChain card
+    langchainLabel: "LangChain Integration",
+    langchainDesc: "One line to integrate with LangChain Agent ecosystem",
+
+    // Claude Desktop card
+    claudeLabel: "Claude Desktop Integration",
+    claudeDesc: "Add to claude_desktop_config.json",
+
     devFeatures: [
       {
-        icon: "⚡",
-        title: "Local Optimization, Zero Latency",
-        desc: "HuangtingOptimizer runs Huangting Protocol optimization locally on your Agent — restructuring prompts to reduce token consumption by 30–80% on average, with zero network requests.",
+        icon: "🔌",
+        title: "MCP Standard Protocol",
+        desc: "Follows Anthropic MCP specification — natively supported by Claude Desktop, LangChain, AutoGPT, CrewAI and other mainstream Agent frameworks without adaptation layers.",
       },
       {
-        icon: "📡",
-        title: "Async Reporting, Non-blocking",
-        desc: "AsyncMetricReporter reports task summaries (savings, task type) asynchronously in a background thread — zero impact on your Agent's main workflow.",
+        icon: "📦",
+        title: "langchain-huangting",
+        desc: "pip install langchain-huangting to get a ready-made LangChain Tool with 4 capabilities: query_concept, get_strategy, get_stats, report_result.",
       },
       {
         icon: "🌐",
         title: "Contribute to the Network",
         desc: "Every report feeds the global HuangtingFlux map, visible in real-time on the Dashboard. Your Agent is both a beneficiary and a co-builder of network value.",
+      },
+    ],
+
+    // MCP Tools
+    mcpToolsLabel: "MCP Tool Capabilities",
+    mcpToolsTitle: "Four Core Capabilities",
+    mcpToolsDesc: "Exposed via standard MCP protocol, callable by any Agent framework",
+    mcpTools: [
+      {
+        name: "get_protocol_concept",
+        desc: "Query Huangting Protocol core concepts (TrueSelf, Ego, Huangting, etc.) — returns structured definitions and AI Agent application guides.",
+        badge: "Query",
+        color: "cyan",
+      },
+      {
+        name: "get_optimization_strategy",
+        desc: "Get token optimization strategies for specific task types, averaging 25–60% savings (complex_research, code_generation, multi_agent_coordination).",
+        badge: "Optimize",
+        color: "gold",
+      },
+      {
+        name: "report_optimization_result",
+        desc: "Report optimization results to the global HuangtingFlux network, contributing to collective intelligence and triggering reciprocal propagation.",
+        badge: "Report",
+        color: "green",
+      },
+      {
+        name: "get_network_stats",
+        desc: "Get real-time HuangtingFlux network statistics: connected agents, total tokens saved, average savings ratio across the network.",
+        badge: "Stats",
+        color: "purple",
       },
     ],
 
@@ -190,7 +290,9 @@ export const t = {
     liveEmpty: "Waiting for agent reports...",
 
     // Footer
-    footerDesc: "HuangtingFlux is the AI Agent implementation layer of the Huangting Protocol open-source ecosystem.",
+    footerDesc: "HuangtingFlux is the AI Agent implementation layer of the Huangting Protocol open-source ecosystem, interconnecting with global Agent frameworks via MCP standard protocol.",
+    footerPypi: "PyPI",
+    footerMcp: "MCP Docs",
   },
 } as const;
 
