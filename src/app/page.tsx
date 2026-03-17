@@ -8,9 +8,10 @@ import {
 } from "recharts";
 import { t, type Lang } from "@/lib/i18n";
 
+// V5.0: MCP endpoint is now served via custom domain
 const HUB_URL =
   process.env.NEXT_PUBLIC_HUB_URL ||
-  "https://web-production-c3cf.up.railway.app";
+  "https://mcp.huangting.ai";
 
 const MCP_ENDPOINT = `${HUB_URL}/mcp`;
 
@@ -153,49 +154,42 @@ export default function Home() {
 
   const taskLabel = lang === "zh" ? TASK_LABEL_ZH : TASK_LABEL_EN;
 
-  const chartData = stats
-    ? Object.entries(stats.tokens_saved_by_task).map(([k, v]) => ({
-        name: taskLabel[k] || k,
-        [lang === "zh" ? "节省 Token" : "Tokens Saved"]: v,
-      }))
-    : [];
+  // Guard against missing tokens_saved_by_task (V5.0 backend always returns it,
+  // but older cached responses or Redis-empty states may not have it)
+  const taskBreakdown = stats?.tokens_saved_by_task ?? {};
 
-  const pieData = stats
-    ? Object.entries(stats.tokens_saved_by_task).map(([k, v]) => ({
-        name: taskLabel[k] || k,
-        value: v,
-      }))
-    : [];
+  const chartData = Object.entries(taskBreakdown).map(([k, v]) => ({
+    name: taskLabel[k] || k,
+    [lang === "zh" ? "节省 Token" : "Tokens Saved"]: v,
+  }));
+
+  const pieData = Object.entries(taskBreakdown).map(([k, v]) => ({
+    name: taskLabel[k] || k,
+    value: v,
+  }));
 
   const barKey = lang === "zh" ? "节省 Token" : "Tokens Saved";
 
-  // Code snippets
-  const langchainCode = `pip install langchain-huangting
-
-from langchain_huangting import HuangtingTool
-
-tool = HuangtingTool(agent_id="my-agent", lang="${lang}")
-result = tool.run({"action": "get_strategy", "task_type": "complex_research"})`;
-
-  const claudeConfig = JSON.stringify({
+  // Code snippets — V5.0
+  // Method 1: Claude Desktop / Cursor config
+  const langchainCode = JSON.stringify({
     mcpServers: {
-      huangting: {
+      "huangting-flux": {
         url: MCP_ENDPOINT,
+        // No auth required — open MCP server
       },
     },
   }, null, 2);
 
-  const mcpDirectCode = `import requests
-
-resp = requests.post("${MCP_ENDPOINT}", json={
-    "jsonrpc": "2.0", "id": 1,
-    "method": "tools/call",
-    "params": {
-        "name": "get_optimization_strategy",
-        "arguments": {"task_type": "complex_research"}
-    }
-})
-print(resp.json())`;
+  // Method 2: Manus Agent config (same URL, different platform)
+  const claudeConfig = JSON.stringify({
+    mcpServers: {
+      "huangting-flux": {
+        url: MCP_ENDPOINT,
+        // Manus will auto-discover tools via tools/list
+      },
+    },
+  }, null, 2);
 
   return (
     <div className="relative min-h-screen" style={{ zIndex: 1 }}>
@@ -265,8 +259,8 @@ print(resp.json())`;
               <span className="text-gray-500">{i.heroMcpComment}{"\n\n"}</span>
               <span className="text-gray-400">MCP Endpoint:{"\n"}</span>
               <span className="text-green-400">  {MCP_ENDPOINT}{"\n\n"}</span>
-              <span className="text-gray-400">pip install </span>
-              <span className="text-yellow-300">langchain-huangting</span>
+              <span className="text-gray-400">{lang === "zh" ? "# 任务开始时调用：" : "# Call at task start:"}{"\n"}</span>
+              <span className="text-yellow-300">  create_optimization_context</span>
             </pre>
           </div>
 
@@ -534,38 +528,35 @@ print(resp.json())`;
             <p className="text-gray-500 text-sm">{i.devSub}</p>
           </div>
 
-          {/* Three integration methods */}
+          {/* Three integration methods — V5.0 */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            {/* Method 1: LangChain */}
+            {/* Method 1: Claude Desktop / Cursor */}
             <div className="glass-card p-6 space-y-4">
               <div className="flex items-center gap-2">
-                <span className="text-xl">📦</span>
+                <span className="text-xl">🤖</span>
                 <h3 className="font-bold text-white">{i.langchainLabel}</h3>
               </div>
               <p className="text-xs text-gray-500">{i.langchainDesc}</p>
               <div className="code-block p-4 relative">
                 <CopyButton text={langchainCode} lang={lang} />
-                <pre className="text-xs leading-relaxed overflow-x-auto" style={{ color: "#e2e8f0" }}>
-                  <span className="text-green-400">pip install</span>
-                  <span className="text-white"> langchain-huangting{"\n\n"}</span>
-                  <span className="text-blue-400">from</span>
-                  <span className="text-white"> langchain_huangting </span>
-                  <span className="text-blue-400">import</span>
-                  <span className="text-white"> HuangtingTool{"\n\n"}</span>
-                  <span className="text-yellow-300">tool</span>
-                  <span className="text-white"> = HuangtingTool({"\n"}</span>
-                  <span className="text-white">    agent_id=</span>
-                  <span className="text-green-300">&quot;my-agent&quot;</span>
-                  <span className="text-white">,{"\n"}</span>
-                  <span className="text-white">    lang=</span>
-                  <span className="text-green-300">&quot;{lang}&quot;</span>
-                  <span className="text-white">,{"\n"}</span>
-                  <span className="text-white">){"\n"}</span>
-                </pre>
+                <pre className="text-xs leading-relaxed overflow-x-auto whitespace-pre" style={{ color: "#e2e8f0" }}>{[
+                  <span key="c1" className="text-gray-500">{`// claude_desktop_config.json
+`}</span>,
+                  <span key="c2" className="text-gray-500">{`{\n  `}</span>,
+                  <span key="c3" className="text-blue-300">{`"mcpServers"`}</span>,
+                  <span key="c4" className="text-white">{`: {\n    `}</span>,
+                  <span key="c5" className="text-yellow-300">{`"huangting-flux"`}</span>,
+                  <span key="c6" className="text-white">{`: {\n      `}</span>,
+                  <span key="c7" className="text-green-300">{`"url"`}</span>,
+                  <span key="c8" className="text-white">{`: `}</span>,
+                  <span key="c9" className="text-green-400">{`"${MCP_ENDPOINT}"`}</span>,
+                  <span key="c10" className="text-gray-500">{`  // no auth needed`}</span>,
+                  <span key="c11" className="text-white">{`\n    }\n  }\n}`}</span>,
+                ]}</pre>
               </div>
               <a
-                href="https://pypi.org/project/langchain-huangting/"
+                href="https://huangting.ai/mcp"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block text-xs px-3 py-1.5 rounded transition-colors"
@@ -575,40 +566,35 @@ print(resp.json())`;
                   border: "1px solid rgba(212,160,23,0.3)",
                 }}
               >
-                PyPI →
+                {i.footerMcp} →
               </a>
             </div>
 
-            {/* Method 2: Claude Desktop */}
+            {/* Method 2: Manus Agent */}
             <div className="glass-card p-6 space-y-4">
               <div className="flex items-center gap-2">
-                <span className="text-xl">🤖</span>
+                <span className="text-xl">🚀</span>
                 <h3 className="font-bold text-white">{i.claudeLabel}</h3>
               </div>
               <p className="text-xs text-gray-500">{i.claudeDesc}</p>
               <div className="code-block p-4 relative">
                 <CopyButton text={claudeConfig} lang={lang} />
-                <pre className="text-xs leading-relaxed overflow-x-auto" style={{ color: "#e2e8f0" }}>
-                  <span className="text-gray-500">{"{"}{"\n"}</span>
-                  <span className="text-white">  </span>
-                  <span className="text-blue-300">&quot;mcpServers&quot;</span>
-                  <span className="text-white">: {"{"}{"\n"}</span>
-                  <span className="text-white">    </span>
-                  <span className="text-yellow-300">&quot;huangting&quot;</span>
-                  <span className="text-white">: {"{"}{"\n"}</span>
-                  <span className="text-white">      </span>
-                  <span className="text-green-300">&quot;url&quot;</span>
-                  <span className="text-white">: </span>
-                  <span className="text-green-400">&quot;{MCP_ENDPOINT}&quot;</span>
-                  <span className="text-white">{"\n"}</span>
-                  <span className="text-white">    {"}"}{"\n"}</span>
-                  <span className="text-white">  {"}"}{"\n"}</span>
-                  <span className="text-gray-500">{"}"}</span>
-                </pre>
+                <pre className="text-xs leading-relaxed overflow-x-auto whitespace-pre" style={{ color: "#e2e8f0" }}>{[
+                  <span key="m1" className="text-gray-500">{`// Manus MCP Settings\n`}</span>,
+                  <span key="m2" className="text-gray-500">{`{\n  `}</span>,
+                  <span key="m3" className="text-blue-300">{`"mcpServers"`}</span>,
+                  <span key="m4" className="text-white">{`: {\n    `}</span>,
+                  <span key="m5" className="text-yellow-300">{`"huangting-flux"`}</span>,
+                  <span key="m6" className="text-white">{`: {\n      `}</span>,
+                  <span key="m7" className="text-green-300">{`"url"`}</span>,
+                  <span key="m8" className="text-white">{`: `}</span>,
+                  <span key="m9" className="text-green-400">{`"${MCP_ENDPOINT}"`}</span>,
+                  <span key="m10" className="text-white">{`\n    }\n  }\n}`}</span>,
+                ]}</pre>
               </div>
             </div>
 
-            {/* Method 3: Direct MCP */}
+            {/* Method 3: Direct HTTP — V5.0 */}
             <div className="glass-card p-6 space-y-4">
               <div className="flex items-center gap-2">
                 <span className="text-xl">🔌</span>
@@ -616,21 +602,57 @@ print(resp.json())`;
               </div>
               <p className="text-xs text-gray-500">{i.mcpEndpointDesc}</p>
               <div className="code-block p-4 relative">
-                <CopyButton text={mcpDirectCode} lang={lang} />
-                <pre className="text-xs leading-relaxed overflow-x-auto" style={{ color: "#e2e8f0" }}>
-                  <span className="text-blue-400">import</span>
-                  <span className="text-white"> requests{"\n\n"}</span>
-                  <span className="text-yellow-300">resp</span>
-                  <span className="text-white"> = requests.post({"\n"}</span>
-                  <span className="text-green-300">  &quot;{MCP_ENDPOINT}&quot;</span>
-                  <span className="text-white">,{"\n"}</span>
-                  <span className="text-white">  json={"{"}</span>
-                  <span className="text-green-300">&quot;method&quot;</span>
-                  <span className="text-white">: </span>
-                  <span className="text-green-300">&quot;tools/call&quot;</span>
-                  <span className="text-white">, ...{"}"}{"\n"}</span>
-                  <span className="text-white">){"\n"}</span>
-                </pre>
+                <CopyButton text={[
+                  `import requests, json`,
+                  ``,
+                  `# Step 1: create context at task start`,
+                  `resp = requests.post("${MCP_ENDPOINT}", json={`,
+                  `    "jsonrpc": "2.0", "id": 1,`,
+                  `    "method": "tools/call",`,
+                  `    "params": {"name": "create_optimization_context",`,
+                  `               "arguments": {"task_description": "..."}}`,
+                  `})`,
+                  `plan = json.loads(resp.json()["result"]["content"][0]["text"])`,
+                  `core = plan["stages"][0]["payload"]["core_instruction"]`,
+                  ``,
+                  `# Step 2: use core as your task prompt`,
+                  `# ...`,
+                  ``,
+                  `# Step 3: report savings after task`,
+                  `requests.post("${MCP_ENDPOINT}", json={`,
+                  `    "jsonrpc": "2.0", "id": 2,`,
+                  `    "method": "tools/call",`,
+                  `    "params": {"name": "report_optimization_result",`,
+                  `               "arguments": {`,
+                  `                   "agent_id": "my-agent",`,
+                  `                   "context_id": plan["context_id"],`,
+                  `                   "actual_tokens_used": 3200,`,
+                  `                   "baseline_tokens": plan["baseline_estimate"]["total_tokens"]`,
+                  `               }}`,
+                  `})`,
+                ].join("\n")} lang={lang} />
+                <pre className="text-xs leading-relaxed overflow-x-auto whitespace-pre" style={{ color: "#e2e8f0" }}>{[
+                  <span key="d1" className="text-blue-400">{`import`}</span>,
+                  <span key="d2" className="text-white">{` requests, json\n\n`}</span>,
+                  <span key="d3" className="text-gray-500">{`# Step 1: create context at task start\n`}</span>,
+                  <span key="d4" className="text-yellow-300">{`resp`}</span>,
+                  <span key="d5" className="text-white">{` = requests.post("${MCP_ENDPOINT}", json={\n`}</span>,
+                  <span key="d6" className="text-white">{`    `}</span>,
+                  <span key="d7" className="text-green-300">{`"method"`}</span>,
+                  <span key="d8" className="text-white">{`: `}</span>,
+                  <span key="d9" className="text-green-300">{`"tools/call"`}</span>,
+                  <span key="d10" className="text-white">{`, `}</span>,
+                  <span key="d11" className="text-green-300">{`"params"`}</span>,
+                  <span key="d12" className="text-white">{`: {`}</span>,
+                  <span key="d13" className="text-green-300">{`"name"`}</span>,
+                  <span key="d14" className="text-white">{`: `}</span>,
+                  <span key="d15" className="text-green-400">{`"create_optimization_context"`}</span>,
+                  <span key="d16" className="text-white">{`}})\n`}</span>,
+                  <span key="d17" className="text-yellow-300">{`plan`}</span>,
+                  <span key="d18" className="text-white">{` = json.loads(resp.json()["result"][...])\n`}</span>,
+                  <span key="d19" className="text-gray-500">{`# Step 2: use plan["stages"][0]["payload"]["core_instruction"]\n`}</span>,
+                  <span key="d20" className="text-gray-500">{`# Step 3: call report_optimization_result after task`}</span>,
+                ]}</pre>
               </div>
               <a
                 href="https://huangting.ai/mcp"

@@ -4,25 +4,29 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { t, type Lang } from "@/lib/i18n";
 
+// V5.0: MCP endpoint served via custom domain
 const HUB_URL =
   process.env.NEXT_PUBLIC_HUB_URL ||
-  "https://web-production-c3cf.up.railway.app";
+  "https://mcp.huangting.ai";
 const WS_URL = HUB_URL.replace(/^https?/, (p) => (p === "https" ? "wss" : "ws"));
 
 const TASK_LABEL_ZH: Record<string, string> = {
   complex_research: "深度研究",
   code_generation: "代码生成",
   multi_agent_coordination: "多智能体",
+  optimization: "通用优化",  // V5.0 default task_type
 };
 const TASK_LABEL_EN: Record<string, string> = {
   complex_research: "Research",
   code_generation: "Codegen",
   multi_agent_coordination: "Multi-Agent",
+  optimization: "Optimization",  // V5.0 default task_type
 };
 
 const TASK_COLOR: Record<string, string> = {
   complex_research: "#D4A017",
   code_generation: "#48BB78",
+  optimization: "#A78BFA",  // V5.0 default task_type — purple
   multi_agent_coordination: "#63B3ED",
 };
 
