@@ -11,7 +11,7 @@ export const t = {
 
     // Hero
     heroLabel: "黄庭熔流 · MCP 协议级 SOP 引擎",
-    heroSlogan: "强制性三阶段生命周期 · 减少 Token · 加速进化",
+    heroSlogan: "一个能让你的 AI Agent Token 成本降低 40% 的东方智慧协议",
     heroCopy: "复制",
     heroCopied: "已复制 ✓",
     heroStatAgents: "接入 Agent 总数",
@@ -158,7 +158,7 @@ export const t = {
 
     // Hero
     heroLabel: "HuangtingFlux · MCP Protocol-Level SOP Engine",
-    heroSlogan: "Mandatory Three-Phase Lifecycle · Save Tokens · Accelerate Evolution",
+    heroSlogan: "An Eastern Wisdom Protocol That Cuts Your AI Agent Token Costs by 40%",
     heroCopy: "Copy",
     heroCopied: "Copied ✓",
     heroStatAgents: "Total Agents",
