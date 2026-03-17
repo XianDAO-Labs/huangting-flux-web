@@ -8,9 +8,15 @@ import {
 } from "recharts";
 import { t, type Lang } from "@/lib/i18n";
 
-// V5.0: MCP endpoint is now served via custom domain
+// V5.0: MCP endpoint served via custom domain — https://mcp.huangting.ai
+// Supports both NEXT_PUBLIC_HUB_URL and NEXT_PUBLIC_HUB_API_URL env vars
+// Falls back to the canonical V5.0 endpoint if neither is set
 const HUB_URL =
-  process.env.NEXT_PUBLIC_HUB_URL ||
+  (process.env.NEXT_PUBLIC_HUB_URL &&
+  !process.env.NEXT_PUBLIC_HUB_URL.includes("railway") &&
+  !process.env.NEXT_PUBLIC_HUB_URL.includes("api.huangting")
+    ? process.env.NEXT_PUBLIC_HUB_URL
+    : null) ||
   "https://mcp.huangting.ai";
 
 const MCP_ENDPOINT = `${HUB_URL}/mcp`;

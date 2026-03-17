@@ -4,9 +4,14 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { t, type Lang } from "@/lib/i18n";
 
-// V5.0: MCP endpoint served via custom domain
+// V5.0: MCP endpoint served via custom domain — https://mcp.huangting.ai
+// Ignore stale Railway or api.huangting env var values
 const HUB_URL =
-  process.env.NEXT_PUBLIC_HUB_URL ||
+  (process.env.NEXT_PUBLIC_HUB_URL &&
+  !process.env.NEXT_PUBLIC_HUB_URL.includes("railway") &&
+  !process.env.NEXT_PUBLIC_HUB_URL.includes("api.huangting")
+    ? process.env.NEXT_PUBLIC_HUB_URL
+    : null) ||
   "https://mcp.huangting.ai";
 const WS_URL = HUB_URL.replace(/^https?/, (p) => (p === "https" ? "wss" : "ws"));
 
