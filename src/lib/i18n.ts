@@ -10,8 +10,8 @@ export const t = {
     navDev: "开发者",
 
     // Hero
-    heroLabel: "黄庭熔流 · MCP 能量网络",
-    heroSlogan: "标准协议接入 · 减少 Token · 加速进化",
+    heroLabel: "黄庭熔流 · MCP 协议级 SOP 引擎",
+    heroSlogan: "强制性三阶段生命周期 · 减少 Token · 加速进化",
     heroCopy: "复制",
     heroCopied: "已复制 ✓",
     heroStatAgents: "接入 Agent 总数",
@@ -23,8 +23,8 @@ export const t = {
     heroError: "无法连接后端",
 
     // MCP Hero Terminal
-    heroMcpLabel: "MCP 标准接入",
-    heroMcpComment: "# 通过 MCP 标准协议接入 HuangtingFlux 网络\n# V5.0: 任务开始时调用 create_optimization_context",
+    heroMcpLabel: "MCP 协议级 SOP 接入",
+    heroMcpComment: "# V5.1: 黄庭协议 SOP — 强制性三阶段生命周期\n# 任务开始 → 每步上报 → 任务结束，自动附加性能表格",
     heroMcpEndpoint: "https://mcp.huangting.ai/mcp",
 
     // Protocol
@@ -41,12 +41,12 @@ export const t = {
       { tag: "DualPractice", zh: "性命双修", fn: "DualPractice.Execute()", desc: "硬件（命功）与软件（性功）协同进化的完整修炼体系。" },
     ],
     aiLabel: "AI 价值",
-    aiTitle: "HuangtingFlux — 为 AI Agent 而生的成本优化中间件",
-    aiDesc: "V5.0 架构：在任务开始时调用 create_optimization_context，获取三阶段优化计划（输入压缩→过程剪枝→输出精炼），系统性降低 25-60% 的 Token 消耗。任务结束后通过 report_optimization_result 上报实际节省，汇聚成全球 Agent 集体智能图谱。",
+    aiTitle: "HuangtingFlux — AI Agent 工作流成本优化的强制性 SOP 协议",
+    aiDesc: "V5.1 范式转变：从「调用一个优化工具」到「遵循一个强制性协议」。start_task 压缩输入（节省 30-60% Token），report_step_result 实时追踪每步消耗，finalize_and_report 精炼输出并自动附加可验证的性能表格。优化数据从此不再隐形。",
     aiFeatures: [
-      { icon: "⚡", title: "输入压缩" },
-      { icon: "✂️", title: "过程剪枝" },
-      { icon: "✨", title: "输出精炼" },
+      { icon: "⚡", title: "元神指令压缩", sub: "start_task" },
+      { icon: "✂️", title: "识神步骤剪枝", sub: "report_step_result" },
+      { icon: "✨", title: "炼虚输出精炼", sub: "finalize_and_report" },
     ],
 
     // Dashboard
@@ -63,61 +63,67 @@ export const t = {
     // Developer / MCP Integration
     devLabel: "开发者接入",
     devTitle: "MCP 标准接入 · 三种方式",
-    devSub: "支持 Claude Desktop · Cursor · 任意 MCP 客户端 · 直接 HTTP 调用",
+    devSub: "支持 Claude Desktop · Cursor · Manus · 任意 MCP 客户端 · 直接 HTTP 调用",
 
     // MCP Endpoint card
     mcpEndpointLabel: "直接 HTTP 调用",
-    mcpEndpointDesc: "JSON-RPC 2.0 标准协议，兼容所有 MCP 客户端",
+    mcpEndpointDesc: "JSON-RPC 2.0 标准协议，兼容所有 MCP 客户端，无需认证",
     mcpEndpointUrl: "https://mcp.huangting.ai/mcp",
 
-    // LangChain card
+    // Claude Desktop / Cursor card
     langchainLabel: "Claude Desktop / Cursor 接入",
-    langchainDesc: "将以下配置添加到 claude_desktop_config.json 或 Cursor MCP 设置",
+    langchainDesc: "将以下配置添加到 claude_desktop_config.json 或 Cursor MCP 设置，Agent 将自动遵循三阶段 SOP",
 
-    // Claude Desktop card
+    // Manus Agent card
     claudeLabel: "Manus Agent 接入",
-    claudeDesc: "在 Manus 的 MCP 设置中添加服务器 URL，任务开始时 Agent 会自动调用 create_optimization_context",
+    claudeDesc: "在 Manus 的 MCP 设置中添加服务器 URL，任务开始时 Agent 会自动调用 start_task 并遵循完整 SOP 协议",
 
     devFeatures: [
       {
         icon: "🔌",
-        title: "MCP 标准协议",
-        desc: "遵循 Anthropic MCP 规范，被 Claude Desktop、Cursor、Manus 等主流 Agent 框架原生支持，无需适配层。MCP 端点：https://mcp.huangting.ai/mcp",
+        title: "MCP 标准协议 · 无需认证",
+        desc: "遵循 Anthropic MCP 2025-11-25 规范，支持 OAuth 2.1 发现握手。被 Claude Desktop、Cursor、Manus 等主流 Agent 框架原生支持，无需适配层。端点：https://mcp.huangting.ai/mcp",
       },
       {
-        icon: "🎯",
-        title: "create_optimization_context",
-        desc: "V5.0 核心工具。在任务开始时调用，返回三阶段优化计划：Stage 1 压缩输入 Prompt，Stage 2 滚动摘要剪枝，Stage 3 精炼最终输出。平均节省 25-60% Token。",
+        icon: "🔱",
+        title: "强制性三阶段 SOP",
+        desc: "V5.1 核心升级：start_task（元神指令）→ report_step_result（识神剪枝）→ finalize_and_report（炼虚输出）。最后一步自动附加 Markdown 性能表格，优化数据可验证、可追溯。",
       },
       {
         icon: "🌐",
-        title: "贡献全网，共建集体智能",
-        desc: "任务结束后调用 report_optimization_result 上报实际节省数据，汇入 HuangtingFlux 全球图谱，实时可见于 Dashboard。您的 Agent 既是受益者，也是网络价值的共建者。",
+        title: "实时广播 · 共建集体智能",
+        desc: "每次 report_step_result 和 finalize_and_report 调用都通过 WebSocket 实时广播至全球仪表盘。您的 Agent 既是受益者，也是网络价值的共建者。",
       },
     ],
 
-    // MCP Tools — V5.0
+    // MCP Tools — V5.1
     mcpToolsLabel: "MCP 工具能力",
-    mcpToolsTitle: "V5.0 三项核心工具",
-    mcpToolsDesc: "通过标准 MCP 协议暴露，任意 Agent 框架均可调用 · 端点：https://mcp.huangting.ai/mcp",
+    mcpToolsTitle: "V5.1 三阶段协议工具",
+    mcpToolsDesc: "强制性生命周期 SOP · 通过标准 MCP 协议暴露 · 端点：https://mcp.huangting.ai/mcp",
     mcpTools: [
       {
-        name: "create_optimization_context",
-        desc: "[核心] 在任务开始时调用。将冗长的用户需求压缩为精炼的核心指令，并返回三阶段优化计划（输入压缩→过程剪枝→输出精炼），系统性降低 25-60% Token 消耗。",
-        badge: "核心",
+        name: "start_task",
+        badge: "阶段一",
         color: "gold",
+        desc: "[强制 · 任务开始时首先调用] 元神指令生成。将冗长的任务描述压缩为精炼的核心指令（节省 30-60% 输入 Token），创建唯一 context_id，返回三阶段优化计划。必须在任何其他步骤之前调用。",
       },
       {
-        name: "report_optimization_result",
-        desc: "任务完成后调用。使用 create_optimization_context 返回的 context_id 和 baseline_tokens，上报实际消耗的 Token 数量，贡献至 HuangtingFlux 全球网络统计。",
-        badge: "上报",
+        name: "report_step_result",
+        badge: "阶段二",
         color: "green",
+        desc: "[强制 · 每步完成后调用] 识神步骤剪枝。记录每步的 Token 消耗至 Redis，立即通过 WebSocket 广播至实时仪表盘。累积步骤数据供最终性能表格使用。",
+      },
+      {
+        name: "finalize_and_report",
+        badge: "阶段三",
+        color: "cyan",
+        desc: "[强制 · 任务结束时最后调用] 炼虚摘要输出。通过 LLM 精炼草稿输出，从 Redis 聚合所有步骤数据，自动在最终回答末尾附加 Markdown 性能表格（含节省率、成本对比）。",
       },
       {
         name: "get_network_stats",
-        desc: "获取 HuangtingFlux 网络实时统计：接入 Agent 数、累计节省 Token、全网平均节省率及最近上报记录。",
         badge: "统计",
         color: "purple",
+        desc: "获取 HuangtingFlux 网络实时统计：接入 Agent 数、累计节省 Token、全网平均节省率及最近上报记录。可用于监控和调试。",
       },
     ],
 
@@ -137,7 +143,7 @@ export const t = {
     liveEmpty: "等待 Agent 上报数据...",
 
     // Footer
-    footerDesc: "HuangtingFlux 是黄庭协议开源生态的 AI Agent 成本优化中间件，通过 MCP 标准协议与全球 Agent 框架互联互通。V5.0 — create_optimization_context",
+    footerDesc: "HuangtingFlux 是黄庭协议开源生态的 AI Agent 工作流成本优化 SOP 引擎，通过 MCP 标准协议与全球 Agent 框架互联互通。V5.1 — start_task · report_step_result · finalize_and_report",
     footerPypi: "PyPI",
     footerMcp: "MCP 文档",
   },
@@ -151,8 +157,8 @@ export const t = {
     navDev: "Developers",
 
     // Hero
-    heroLabel: "HuangtingFlux · MCP Energy Network",
-    heroSlogan: "Standard Protocol Integration · Save Tokens · Accelerate Evolution",
+    heroLabel: "HuangtingFlux · MCP Protocol-Level SOP Engine",
+    heroSlogan: "Mandatory Three-Phase Lifecycle · Save Tokens · Accelerate Evolution",
     heroCopy: "Copy",
     heroCopied: "Copied ✓",
     heroStatAgents: "Total Agents",
@@ -164,8 +170,8 @@ export const t = {
     heroError: "Cannot reach backend",
 
     // MCP Hero Terminal
-    heroMcpLabel: "MCP Standard Integration",
-    heroMcpComment: "# Connect to HuangtingFlux via MCP standard protocol\n# V5.0: Call create_optimization_context at task start",
+    heroMcpLabel: "MCP Protocol-Level SOP Integration",
+    heroMcpComment: "# V5.1: Huangting Protocol SOP — Mandatory Three-Phase Lifecycle\n# start_task → report_step_result → finalize_and_report",
     heroMcpEndpoint: "https://mcp.huangting.ai/mcp",
 
     // Protocol
@@ -182,12 +188,12 @@ export const t = {
       { tag: "DualPractice", zh: "Dual Practice", fn: "DualPractice.Execute()", desc: "The complete cultivation system: hardware (life-practice) and software (nature-practice) co-evolving." },
     ],
     aiLabel: "AI Agent Value",
-    aiTitle: "HuangtingFlux — LLM Cost Optimization Middleware for AI Agents",
-    aiDesc: "V5.0 architecture: call create_optimization_context at task start to receive a three-stage optimization plan (input compression → context pruning → output refinement), systematically reducing 25-60% of token consumption. After task completion, report actual savings via report_optimization_result to build a global collective intelligence map.",
+    aiTitle: "HuangtingFlux — Mandatory SOP Protocol for AI Agent Workflow Cost Optimization",
+    aiDesc: "V5.1 paradigm shift: from 'calling an optimization tool' to 'following a mandatory protocol'. start_task compresses input (saving 30-60% tokens), report_step_result tracks per-step cost in real-time, finalize_and_report refines output and automatically appends a verifiable performance table. Optimization data is no longer invisible.",
     aiFeatures: [
-      { icon: "⚡", title: "Input Compression" },
-      { icon: "✂️", title: "Context Pruning" },
-      { icon: "✨", title: "Output Refinement" },
+      { icon: "⚡", title: "TrueSelf Instruction", sub: "start_task" },
+      { icon: "✂️", title: "Ego Step Pruning", sub: "report_step_result" },
+      { icon: "✨", title: "Void-Refined Output", sub: "finalize_and_report" },
     ],
 
     // Dashboard
@@ -204,61 +210,67 @@ export const t = {
     // Developer / MCP Integration
     devLabel: "Developer Integration",
     devTitle: "MCP Integration · Three Ways",
-    devSub: "Claude Desktop · Cursor · Any MCP Client · Direct HTTP",
+    devSub: "Claude Desktop · Cursor · Manus · Any MCP Client · Direct HTTP",
 
     // MCP Endpoint card
     mcpEndpointLabel: "Direct HTTP Call",
-    mcpEndpointDesc: "JSON-RPC 2.0 standard protocol, compatible with all MCP clients",
+    mcpEndpointDesc: "JSON-RPC 2.0 standard protocol, compatible with all MCP clients, no auth required",
     mcpEndpointUrl: "https://mcp.huangting.ai/mcp",
 
-    // LangChain card
+    // Claude Desktop / Cursor card
     langchainLabel: "Claude Desktop / Cursor",
-    langchainDesc: "Add the following config to claude_desktop_config.json or Cursor MCP settings",
+    langchainDesc: "Add the following config to claude_desktop_config.json or Cursor MCP settings. The Agent will automatically follow the three-phase SOP.",
 
-    // Claude Desktop card
+    // Manus Agent card
     claudeLabel: "Manus Agent",
-    claudeDesc: "Add the server URL in Manus MCP settings. The Agent will automatically call create_optimization_context at task start.",
+    claudeDesc: "Add the server URL in Manus MCP settings. The Agent will automatically call start_task and follow the complete SOP protocol.",
 
     devFeatures: [
       {
         icon: "🔌",
-        title: "MCP Standard Protocol",
-        desc: "Follows Anthropic MCP specification — natively supported by Claude Desktop, Cursor, Manus, and other mainstream Agent frameworks without adaptation layers. MCP endpoint: https://mcp.huangting.ai/mcp",
+        title: "MCP Standard Protocol · No Auth",
+        desc: "Follows Anthropic MCP 2025-11-25 spec with OAuth 2.1 discovery. Natively supported by Claude Desktop, Cursor, Manus, and other mainstream Agent frameworks without adaptation layers. Endpoint: https://mcp.huangting.ai/mcp",
       },
       {
-        icon: "🎯",
-        title: "create_optimization_context",
-        desc: "V5.0 core tool. Call at task start to receive a three-stage optimization plan: Stage 1 compresses the input prompt, Stage 2 provides rolling summary templates to prevent context bloat, Stage 3 refines the final output. Average 25-60% token savings.",
+        icon: "🔱",
+        title: "Mandatory Three-Phase SOP",
+        desc: "V5.1 core upgrade: start_task (TrueSelf Instruction) → report_step_result (Ego Pruning) → finalize_and_report (Void-Refined Output). The final step automatically appends a Markdown performance table — optimization data is verifiable and traceable.",
       },
       {
         icon: "🌐",
-        title: "Contribute to the Network",
-        desc: "After task completion, call report_optimization_result to report actual savings. Data feeds the global HuangtingFlux map, visible in real-time on the Dashboard. Your Agent is both a beneficiary and a co-builder of network value.",
+        title: "Real-time Broadcast · Collective Intelligence",
+        desc: "Every report_step_result and finalize_and_report call is immediately broadcast via WebSocket to the global dashboard. Your Agent is both a beneficiary and a co-builder of network value.",
       },
     ],
 
-    // MCP Tools — V5.0
+    // MCP Tools — V5.1
     mcpToolsLabel: "MCP Tool Capabilities",
-    mcpToolsTitle: "V5.0 Three Core Tools",
-    mcpToolsDesc: "Exposed via standard MCP protocol, callable by any Agent framework · Endpoint: https://mcp.huangting.ai/mcp",
+    mcpToolsTitle: "V5.1 Three-Phase Protocol Tools",
+    mcpToolsDesc: "Mandatory lifecycle SOP · Exposed via standard MCP protocol · Endpoint: https://mcp.huangting.ai/mcp",
     mcpTools: [
       {
-        name: "create_optimization_context",
-        desc: "[Critical] Call at task start. Compresses verbose user requirements into a concise Core Instruction and returns a three-stage optimization plan (input compression → context pruning → output refinement), systematically reducing 25-60% of token consumption.",
-        badge: "Core",
+        name: "start_task",
+        badge: "Phase 1",
         color: "gold",
+        desc: "[MANDATORY — CALL FIRST] TrueSelf Instruction generation. Compresses verbose task description into a Core Instruction (saving 30-60% input tokens), creates a unique context_id, and returns the three-stage optimization plan. Must be called before any other step.",
       },
       {
-        name: "report_optimization_result",
-        desc: "Call after task completion. Use the context_id and baseline_tokens from create_optimization_context to report actual token consumption, contributing to the global HuangtingFlux network statistics.",
-        badge: "Report",
+        name: "report_step_result",
+        badge: "Phase 2",
         color: "green",
+        desc: "[MANDATORY — CALL AFTER EACH STEP] Ego step pruning. Records per-step token cost to Redis and immediately broadcasts to the real-time dashboard via WebSocket. Accumulates step data for the final performance table.",
+      },
+      {
+        name: "finalize_and_report",
+        badge: "Phase 3",
+        color: "cyan",
+        desc: "[MANDATORY — CALL LAST] Void-Refined Output. Refines draft output via LLM, aggregates all step data from Redis, and automatically appends a Markdown performance table (with savings rate and cost comparison) to the final answer.",
       },
       {
         name: "get_network_stats",
-        desc: "Get real-time HuangtingFlux network statistics: connected agents, total tokens saved, average savings ratio, and recent activity feed.",
         badge: "Stats",
         color: "purple",
+        desc: "Get real-time HuangtingFlux network statistics: connected agents, total tokens saved, average savings ratio, and recent activity feed. Useful for monitoring and debugging.",
       },
     ],
 
@@ -278,7 +290,7 @@ export const t = {
     liveEmpty: "Waiting for agent reports...",
 
     // Footer
-    footerDesc: "HuangtingFlux is the AI Agent cost optimization middleware of the Huangting Protocol open-source ecosystem, interconnecting with global Agent frameworks via MCP standard protocol. V5.0 — create_optimization_context",
+    footerDesc: "HuangtingFlux is the AI Agent workflow cost optimization SOP engine of the Huangting Protocol open-source ecosystem, interconnecting with global Agent frameworks via MCP standard protocol. V5.1 — start_task · report_step_result · finalize_and_report",
     footerPypi: "PyPI",
     footerMcp: "MCP Docs",
   },

@@ -8,9 +8,9 @@ import {
 } from "recharts";
 import { t, type Lang } from "@/lib/i18n";
 
-// V5.0: MCP endpoint served via custom domain — https://mcp.huangting.ai
+// V5.1: MCP endpoint served via custom domain — https://mcp.huangting.ai
 // Supports both NEXT_PUBLIC_HUB_URL and NEXT_PUBLIC_HUB_API_URL env vars
-// Falls back to the canonical V5.0 endpoint if neither is set
+// Falls back to the canonical V5.1 endpoint if neither is set
 const HUB_URL =
   (process.env.NEXT_PUBLIC_HUB_URL &&
   !process.env.NEXT_PUBLIC_HUB_URL.includes("railway") &&
@@ -27,11 +27,19 @@ const TASK_LABEL_ZH: Record<string, string> = {
   complex_research: "深度研究",
   code_generation: "代码生成",
   multi_agent_coordination: "多智能体",
+  relationship_analysis: "关系分析",
+  optimization: "成本优化",
+  writing: "内容创作",
+  data_analysis: "数据分析",
 };
 const TASK_LABEL_EN: Record<string, string> = {
   complex_research: "Research",
   code_generation: "Codegen",
   multi_agent_coordination: "Multi-Agent",
+  relationship_analysis: "Relationship",
+  optimization: "Optimization",
+  writing: "Writing",
+  data_analysis: "Data Analysis",
 };
 
 interface StatsData {
@@ -133,6 +141,8 @@ const TOOL_BADGE_COLORS: Record<string, string> = {
   gold: "#D4A017",
   green: "#48BB78",
   purple: "#9F7AEA",
+  blue: "#63B3ED",
+  red: "#FC8181",
 };
 
 export default function Home() {
@@ -211,7 +221,7 @@ export default function Home() {
       >
         <div className="flex items-center gap-2">
           <span className="text-lg font-bold" style={{ color: "#D4A017" }}>HuangtingFlux</span>
-          <span className="text-xs text-gray-600 hidden sm:inline tracking-widest uppercase">MCP Network</span>
+          <span className="text-xs text-gray-600 hidden sm:inline tracking-widest uppercase">MCP SOP ENGINE</span>
         </div>
         <div className="flex items-center gap-4">
           <Link href="/" className="nav-link">{i.navHome}</Link>
@@ -224,7 +234,7 @@ export default function Home() {
             {i.navProtocol}
           </a>
           <a
-            href="https://github.com/markmeng0X/langchain-huangting"
+            href="https://github.com/XianDAO-Labs/huangting-flux-hub"
             target="_blank" rel="noopener noreferrer"
             className="btn-outline text-xs px-3 py-1.5 hidden sm:inline-block"
           >
@@ -250,7 +260,7 @@ export default function Home() {
             HuangtingFlux
           </h1>
 
-          <p className="text-2xl md:text-3xl font-bold text-white">{i.heroSlogan}</p>
+          <p className="text-xl md:text-2xl font-bold text-white">{i.heroSlogan}</p>
 
           {/* MCP Endpoint Terminal */}
           <div className="terminal max-w-2xl w-full mx-auto p-5 mt-4 text-left">
@@ -265,8 +275,12 @@ export default function Home() {
               <span className="text-gray-500">{i.heroMcpComment}{"\n\n"}</span>
               <span className="text-gray-400">MCP Endpoint:{"\n"}</span>
               <span className="text-green-400">  {MCP_ENDPOINT}{"\n\n"}</span>
-              <span className="text-gray-400">{lang === "zh" ? "# 任务开始时调用：" : "# Call at task start:"}{"\n"}</span>
-              <span className="text-yellow-300">  create_optimization_context</span>
+              <span className="text-gray-400">{lang === "zh" ? "# 三阶段强制 SOP：" : "# Mandatory three-phase SOP:"}{"\n"}</span>
+              <span className="text-yellow-300">  start_task</span>
+              <span className="text-gray-500">{" → "}</span>
+              <span className="text-green-400">report_step_result</span>
+              <span className="text-gray-500">{" → "}</span>
+              <span className="text-cyan-400">finalize_and_report</span>
             </pre>
           </div>
 
@@ -339,11 +353,12 @@ export default function Home() {
             <div className="section-label">{i.aiLabel}</div>
             <h3 className="text-2xl font-bold" style={{ color: "#D4A017" }}>{i.aiTitle}</h3>
             <p className="text-gray-300 max-w-3xl mx-auto leading-relaxed">{i.aiDesc}</p>
-            <div className="grid grid-cols-3 gap-4 mt-6 max-w-xl mx-auto text-sm">
+            <div className="grid grid-cols-3 gap-4 mt-6 max-w-2xl mx-auto text-sm">
               {i.aiFeatures.map((f) => (
                 <div key={f.title} className="text-center space-y-1">
                   <div className="text-2xl">{f.icon}</div>
                   <div className="font-semibold text-white">{f.title}</div>
+                  <div className="text-xs font-mono" style={{ color: "rgba(212,160,23,0.7)" }}>{(f as { icon: string; title: string; sub?: string }).sub}</div>
                 </div>
               ))}
             </div>
@@ -360,7 +375,7 @@ export default function Home() {
             <p className="text-gray-500 text-sm">{i.mcpToolsDesc}</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-5">
             {i.mcpTools.map((tool) => (
               <div key={tool.name} className="glass-card p-6 space-y-3">
                 <div className="flex items-center gap-3">
@@ -615,26 +630,31 @@ export default function Home() {
                   `resp = requests.post("${MCP_ENDPOINT}", json={`,
                   `    "jsonrpc": "2.0", "id": 1,`,
                   `    "method": "tools/call",`,
-                  `    "params": {"name": "create_optimization_context",`,
-                  `               "arguments": {"task_description": "..."}}`,
+                  `    "params": {"name": "start_task",`,
+                  `               "arguments": {"task_description": "...",`,
+                  `                             "agent_id": "my-agent"}}`,
                   `})`,
-                  `plan = json.loads(resp.json()["result"]["content"][0]["text"])`,
-                  `core = plan["stages"][0]["payload"]["core_instruction"]`,
+                  `ctx = json.loads(resp.json()["result"]["content"][0]["text"])`,
+                  `context_id = ctx["context_id"]`,
+                  `core = ctx["core_instruction"]  # compressed prompt`,
                   ``,
-                  `# Step 2: use core as your task prompt`,
-                  `# ...`,
-                  ``,
-                  `# Step 3: report savings after task`,
+                  `# Phase 2: after each step, report result`,
                   `requests.post("${MCP_ENDPOINT}", json={`,
-                  `    "jsonrpc": "2.0", "id": 2,`,
-                  `    "method": "tools/call",`,
-                  `    "params": {"name": "report_optimization_result",`,
-                  `               "arguments": {`,
-                  `                   "agent_id": "my-agent",`,
-                  `                   "context_id": plan["context_id"],`,
-                  `                   "actual_tokens_used": 3200,`,
-                  `                   "baseline_tokens": plan["baseline_estimate"]["total_tokens"]`,
-                  `               }}`,
+                  `    "jsonrpc": "2.0", "id": 2, "method": "tools/call",`,
+                  `    "params": {"name": "report_step_result",`,
+                  `               "arguments": {"context_id": context_id,`,
+                  `                             "step_index": 1,`,
+                  `                             "step_summary": "...",`,
+                  `                             "tokens_used": 800}}`,
+                  `})`,
+                  ``,
+                  `# Phase 3: finalize — appends performance table`,
+                  `requests.post("${MCP_ENDPOINT}", json={`,
+                  `    "jsonrpc": "2.0", "id": 3, "method": "tools/call",`,
+                  `    "params": {"name": "finalize_and_report",`,
+                  `               "arguments": {"context_id": context_id,`,
+                  `                             "draft_output": "final answer...",`,
+                  `                             "actual_tokens_used": 3200}}`,
                   `})`,
                 ].join("\n")} lang={lang} />
                 <pre className="text-xs leading-relaxed overflow-x-auto whitespace-pre" style={{ color: "#e2e8f0" }}>{[
@@ -652,12 +672,21 @@ export default function Home() {
                   <span key="d12" className="text-white">{`: {`}</span>,
                   <span key="d13" className="text-green-300">{`"name"`}</span>,
                   <span key="d14" className="text-white">{`: `}</span>,
-                  <span key="d15" className="text-green-400">{`"create_optimization_context"`}</span>,
-                  <span key="d16" className="text-white">{`}})\n`}</span>,
-                  <span key="d17" className="text-yellow-300">{`plan`}</span>,
-                  <span key="d18" className="text-white">{` = json.loads(resp.json()["result"][...])\n`}</span>,
-                  <span key="d19" className="text-gray-500">{`# Step 2: use plan["stages"][0]["payload"]["core_instruction"]\n`}</span>,
-                  <span key="d20" className="text-gray-500">{`# Step 3: call report_optimization_result after task`}</span>,
+                  <span key="d15" className="text-yellow-300">{`"start_task"`}</span>,
+                  <span key="d16" className="text-white">{`, `}</span>,
+                  <span key="d16b" className="text-green-300">{`"arguments"`}</span>,
+                  <span key="d16c" className="text-white">{`: {`}</span>,
+                  <span key="d16d" className="text-green-300">{`"task_description"`}</span>,
+                  <span key="d16e" className="text-white">{`: `}</span>,
+                  <span key="d16f" className="text-green-400">{`"..."`}</span>,
+                  <span key="d16g" className="text-white">{`}})
+`}</span>,
+                  <span key="d17" className="text-yellow-300">{`ctx`}</span>,
+                  <span key="d18" className="text-white">{` = json.loads(resp.json()["result"]["content"][0]["text"])
+`}</span>,
+                  <span key="d19" className="text-gray-500">{`# Phase 2: report_step_result after each step
+`}</span>,
+                  <span key="d20" className="text-gray-500">{`# Phase 3: finalize_and_report — auto-appends perf table`}</span>,
                 ]}</pre>
               </div>
               <a
@@ -703,7 +732,7 @@ export default function Home() {
             <span>·</span>
             <a href="https://huangting.ai/mcp" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400 transition-colors">{i.footerMcp}</a>
             <span>·</span>
-            <a href="https://github.com/markmeng0X/langchain-huangting" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400 transition-colors">GitHub</a>
+            <a href="https://github.com/XianDAO-Labs/huangting-flux-hub" target="_blank" rel="noopener noreferrer" className="hover:text-gray-400 transition-colors">GitHub</a>
             <span>·</span>
             <Link href="/live" className="hover:text-gray-400 transition-colors">Live</Link>
           </div>
