@@ -98,14 +98,36 @@ export default function LivePage() {
       ws.onmessage = (e) => {
         try {
           const data = JSON.parse(e.data);
+          // Ignore ping heartbeats
           if (data.type === "ping") return;
+
+          // History replay: batch of past events sent on connection
+          if (data.type === "history" && Array.isArray(data.events)) {
+            const historyEvents: LiveEvent[] = data.events.map((item: Record<string, unknown>) => {
+              counterRef.current += 1;
+              return {
+                id: counterRef.current,
+                ts: (item.ts as number) || Math.floor(Date.now() / 1000),
+                agent_id: item.agent_id as string,
+                task_type: (item.task_type as string) || "optimization",
+                tokens_saved: (item.tokens_saved as number) || 0,
+                tokens_baseline: (item.tokens_baseline as number) || 0,
+              };
+            });
+            // Prepend history (newest first) to the events list
+            setEvents((prev) => [...historyEvents.reverse(), ...prev].slice(0, 200));
+            setTotalCount((n) => n + historyEvents.length);
+            return;
+          }
+
+          // Single real-time event
           counterRef.current += 1;
           const event: LiveEvent = {
             id: counterRef.current,
             ts: data.ts || Math.floor(Date.now() / 1000),
             agent_id: data.agent_id,
-            task_type: data.task_type,
-            tokens_saved: data.tokens_saved,
+            task_type: data.task_type || "optimization",
+            tokens_saved: data.tokens_saved || 0,
             tokens_baseline: data.tokens_baseline || 0,
           };
           setEvents((prev) => [event, ...prev].slice(0, 200));
