@@ -717,6 +717,44 @@ export default function Home() {
               </div>
             ))}
           </div>
+
+          {/* Framework Integrations */}
+          <div className="mt-8">
+            <div className="text-center mb-6">
+              <div className="section-label">{lang === "zh" ? "框架集成" : "Framework Integrations"}</div>
+              <p className="text-gray-500 text-sm mt-2">
+                {lang === "zh"
+                  ? "通过主流 AI 框架原生接入 HuangtingFlux MCP 服务器"
+                  : "Connect HuangtingFlux MCP server via mainstream AI frameworks"}
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+              <Link href="/integrations/langchain">
+                <div className="glass-card p-5 flex items-center gap-4 cursor-pointer transition-all hover:border-yellow-500/50 group">
+                  <span className="text-3xl">🦜</span>
+                  <div className="flex-1">
+                    <div className="font-bold text-white group-hover:text-yellow-400 transition-colors">LangChain</div>
+                    <div className="text-xs text-gray-500 mt-0.5">
+                      {lang === "zh" ? "langchain-mcp-adapters · MultiServerMCPClient" : "langchain-mcp-adapters · MultiServerMCPClient"}
+                    </div>
+                  </div>
+                  <span className="text-yellow-500/60 group-hover:text-yellow-400 transition-colors text-lg">→</span>
+                </div>
+              </Link>
+              <Link href="/integrations/crewai">
+                <div className="glass-card p-5 flex items-center gap-4 cursor-pointer transition-all hover:border-yellow-500/50 group">
+                  <span className="text-3xl">🚢</span>
+                  <div className="flex-1">
+                    <div className="font-bold text-white group-hover:text-yellow-400 transition-colors">CrewAI</div>
+                    <div className="text-xs text-gray-500 mt-0.5">
+                      {lang === "zh" ? "MCPServerHTTP · DSL 一行接入" : "MCPServerHTTP · DSL One-liner"}
+                    </div>
+                  </div>
+                  <span className="text-yellow-500/60 group-hover:text-yellow-400 transition-colors text-lg">→</span>
+                </div>
+              </Link>
+            </div>
+          </div>
         </section>
 
         <hr className="gold-divider" />
